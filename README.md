@@ -1,5 +1,4 @@
-Categories before:
-
+#### Categories before:
 ```json
 {
   "data": [
@@ -27,7 +26,7 @@ Categories before:
 }
 ```
 
-Categories after:
+#### Categories after:
 ```json
 {
   "success": true,
@@ -57,7 +56,7 @@ Categories after:
 }
 ```
 
-Show category before:
+#### Show category before:
 ```json
 {
   "data": [
@@ -69,7 +68,7 @@ Show category before:
 }
 ```
 
-Show category after:
+#### Show category after:
 ```json
 {
   "success": true,
@@ -83,8 +82,7 @@ Show category after:
 }
 ```
 
-Show category not found case:
-
+#### Show category not found case:
 ```json 
 {
     "success": false,
@@ -92,8 +90,7 @@ Show category not found case:
 }
 ```
 
-Posts before
-
+#### Posts before
 ```json
 {
   "data": [
@@ -161,8 +158,7 @@ Posts before
 }
 ```
 
-Posts after
-
+#### Posts after
 ```json
 {
     "success": true,
@@ -232,7 +228,7 @@ Posts after
 }
 ```
 
-Posts after with additional pagination data
+#### Posts after with additional pagination data
 ```json
 {
     "Success": true,
