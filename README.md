@@ -1,5 +1,17 @@
-## Easy improver/builder/tuning class for JSON response in Laravel
+## Easy wrapper/improver/builder/tuning class for JSON response in Laravel
 
+Wrap/improve/build/tune a response JSON data structure by
+* same response status variant for all responses in a project
+* add a description message
+* add additional key-value data
+* easy output of a Laravel's collection
+
+Class is easy to integrate in a Laravel project. You will need: 
+* to put it in a Service directory
+* Create Laravel resource classes for your entities (best practice even if without this class usage)  and modify them
+* Create Laravel resource collection classes for your entities (best practice even if without this class usage) and modify them
+
+### JSON example responses:
 #### Categories before:
 ```json
 {
@@ -271,5 +283,166 @@
             "category": "Case Studies & Success Stories"
         }
     ]
+}
+```
+
+### PHP embed example
+#### Create a resource (from a Laravel box) class for your entity like this:
+```php 
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class CategoryResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return parent::toArray($request);
+    }
+}
+```
+
+#### Modify it like this:
+```php 
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class CategoryResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name
+        ];
+    }
+}
+```
+
+#### Create a resource collection (from a Laravel box) class for your entity like this:
+```php
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+
+class CategoryResourceCollection extends ResourceCollection
+{
+    /**
+     * Transform the resource collection into an array.
+     *
+     * @return array<int|string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        return parent::toArray($request);
+    }
+}
+```
+
+#### Modify it like this:
+```php
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+
+class CategoryResourceCollection extends ResourceCollection
+{
+    private bool $isSuccessfullResponse;
+    private string $message;
+    private ?array $additionalInfo;
+
+    public function __construct(bool $isSuccessfullResponse, string $message, $resource, ?array $additionalInfo = null)
+    {
+        $this->isSuccessfullResponse = $isSuccessfullResponse;
+        $this->message = $message;
+        $this->additionalInfo = $additionalInfo;
+        parent::__construct($resource);
+    }
+
+    /**
+     * Transform the resource collection into an array.
+     *
+     * @return array<int|string, mixed>
+     */
+    public function toArray(Request $request): array
+    {
+        $result = [
+            'success' => $this->isSuccessfullResponse,
+        ];
+        $result['message'] = $this->message;
+        if(!is_null($this->additionalInfo)){
+            $result[key($this->additionalInfo)] = current($this->additionalInfo);
+        }
+        $result['data'] = $this->collection;
+        return $result;
+    }
+}
+
+```
+
+### PHP usage example
+```php
+<?php
+
+namespace App\Services;
+
+use App\Http\Resources\CategoryResource;
+use App\Models\Category;
+
+class CategoryService
+{
+    private ResponseService $responseService;
+    
+    /** Injection of this service class */
+    public function __construct(ResponseService $responseService)
+    {
+        $this->responseService = $responseService;
+    }
+    
+    /** Realization of message and collection output in a JSON Response */
+    public function getAll()
+    {
+        $categories = Category::all();
+        return $this->responseService->successResponseWithResourceCollection(
+            'All categories', CategoryResource::class, $categories, null
+        );
+    }
+
+    /** Realization of message and collection with one item output and not found case in a JSON Response */
+    public function show(int $id)
+    {
+        $category = Category::where('id', $id)->get();
+
+        if(sizeof($category) > 0) {
+            return $this->responseService->successResponseWithResourceCollection(
+                'Category by id', CategoryResource::class, $category, null
+            );
+        } else {
+            return $this->responseService->errorResponse('Category not found', 404);
+        }
+    }
 }
 ```
