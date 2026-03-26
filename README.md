@@ -403,8 +403,12 @@ class CategoryResourceCollection extends ResourceCollection
         ];
         $result['message'] = $this->message;
         if(!is_null($this->info)){
-            foreach ($this->info as $key => $value){
-                $result[$key] = current($value);
+            if(sizeof($this->info) > 1) {
+                foreach ($this->info as $key => $value) {
+                    $result[$key] = current($value);
+                }
+            } else {
+                $result[key($this->info)] = current($this->info);
             }
         }
         $result['data'] = $this->collection;
