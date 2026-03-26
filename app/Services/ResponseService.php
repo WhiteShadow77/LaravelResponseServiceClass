@@ -4,7 +4,7 @@
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Database\Eloquent\Collection;
 
-/** Easier service for setup/build a JSON response */
+/** Easier service for improve/build/tune a JSON response */
 class ResponseService
 {
     private array  $responseData;

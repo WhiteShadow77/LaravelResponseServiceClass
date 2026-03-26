@@ -1,3 +1,5 @@
+## Easy improver/builder/tuning class for JSON response in Laravel
+
 #### Categories before:
 ```json
 {
