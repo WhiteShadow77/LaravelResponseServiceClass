@@ -402,8 +402,10 @@ class CategoryResourceCollection extends ResourceCollection
             'success' => $this->isSuccessfullResponse,
         ];
         $result['message'] = $this->message;
-        if(!is_null($this->additionalInfo)){
-            $result[key($this->additionalInfo)] = current($this->additionalInfo);
+        if(!is_null($this->info)){
+            foreach ($this->info as $key => $value){
+                $result[$key] = current($value);
+            }
         }
         $result['data'] = $this->collection;
         return $result;
