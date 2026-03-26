@@ -1,4 +1,4 @@
-## Easy wrapper/improver/builder/tuning class for JSON response in Laravel
+# Easy wrapper/improver/builder/tuning class for JSON response in Laravel
 
 Wrap/improve/build/tune a response JSON data structure by
 * same response status variant for all responses in a project
@@ -11,7 +11,7 @@ Class is easy to integrate in a Laravel project. You will need:
 * Create Laravel resource classes for your entities (best practice even if without this class usage)  and modify them
 * Create Laravel resource collection classes for your entities (best practice even if without this class usage) and modify them
 
-### JSON example responses:
+## JSON example responses:
 #### Categories before:
 ```json
 {
@@ -286,7 +286,7 @@ Class is easy to integrate in a Laravel project. You will need:
 }
 ```
 
-### PHP embed example
+## PHP embed example
 #### Create a resource (from a Laravel box) class for your entity like this:
 ```php 
 <?php
@@ -404,6 +404,7 @@ class CategoryResourceCollection extends ResourceCollection
 ```
 
 ### PHP usage example
+#### Embed in entity service (CategoryService)
 ```php
 <?php
 
@@ -446,3 +447,29 @@ class CategoryService
     }
 }
 ```
+#### Typical practice of call of entity service (CategoryService) from a controller (not required for your usage, just for understand how it works)
+```php 
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Http\Requests\CategoryRequest;
+use App\Services\CategoryService;
+
+class CategoryController extends Controller
+{
+    public function __construct(private CategoryService $categoryService)
+    {
+    }
+    public function getAll()
+    {
+        return $this->categoryService->getAll();
+    }
+
+    public function show(CategoryRequest $request)
+    {
+        return $this->categoryService->show($request->route('id'));
+    }
+}
+```
+
