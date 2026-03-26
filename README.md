@@ -519,6 +519,7 @@ class CategoryRequest extends FormRequest
         ];
     }
 
+    /** Easy validation realization */
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
     {
         App::make(ResponseService::class)->errorResponseWithException('Bad Request');
