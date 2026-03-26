@@ -1,7 +1,7 @@
 # Easy wrapper/improver/builder/tuning class for JSON response in Laravel
 
 Wrap/improve/build/tune a response JSON data structure by
-* same response status variant for all responses in a project
+* same response status structure for all responses in a project
 * add a description message
 * add additional key-value data
 * easy output of a Laravel's collection
