@@ -5,6 +5,7 @@ Wrap/improve/build/tune a response JSON data structure by
 * add a description message
 * add additional key-value data
 * easy output of a Laravel's collection
+* easy handle validation errors
 
 Class is easy to integrate in a Laravel project. You will need: 
 * to put it in a Service directory
@@ -101,6 +102,14 @@ Class is easy to integrate in a Laravel project. You will need:
 {
     "success": false,
     "message": "Category not found"
+}
+```
+
+#### Show category validation case (in a route instead id user inserted symbol)
+```json
+{
+    "success": false,
+    "message": "Bad Request"
 }
 ```
 
@@ -471,5 +480,50 @@ class CategoryController extends Controller
         return $this->categoryService->show($request->route('id'));
     }
 }
+```
+
+#### Validation handle example for Category entity via FormRequest. Create a FromRequest (from a Laravel's box) for entity and modify it like this
+```php
+<?php
+
+namespace App\Http\Requests;
+
+use App\Services\ResponseService;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\App;
+
+class CategoryRequest extends FormRequest
+{
+    protected function prepareForValidation()
+    {
+        $this->merge(['id' => $this->route('id')]);
+    }
+
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'id' => 'required|integer',
+        ];
+    }
+
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        App::make(ResponseService::class)->errorResponseWithException('Bad Request');
+    }
+}
+
 ```
 
