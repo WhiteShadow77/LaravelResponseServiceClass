@@ -29,7 +29,32 @@ Categories before:
 
 Categories after:
 ```json
-
+{
+  "success": true,
+  "message": "All categories",
+  "data": [
+    {
+      "id": 1,
+      "name": "How-To"
+    },
+    {
+      "id": 2,
+      "name": "Listicles"
+    },
+    {
+      "id": 3,
+      "name": "The Ultimate Guide"
+    },
+    {
+      "id": 4,
+      "name": "Case Studies & Success Stories"
+    },
+    {
+      "id": 5,
+      "name": "Reviews & Comparisons"
+    }
+  ]
+}
 ```
 
 Show category before:
@@ -41,6 +66,29 @@ Show category before:
       "name": "How-To"
     }
   ]
+}
+```
+
+Show category after:
+```json
+{
+  "success": true,
+  "message": "Category by id",
+  "data": [
+    {
+      "id": 1,
+      "name": "How-To"
+    }
+  ]
+}
+```
+
+Show category not found case:
+
+```json 
+{
+    "success": false,
+    "message": "Category not found"
 }
 ```
 
@@ -110,5 +158,120 @@ Posts before
       "category": "Listicles"
     }
   ]
+}
+```
+
+Posts after
+
+```json
+{
+    "success": true,
+    "message": "All posts",
+    "data": [
+        {
+            "title": "ipsa",
+            "content": "Libero iste illo ut aut animi quia quibusdam consectetur sunt vel aut.",
+            "category": "Listicles"
+        },
+        {
+            "title": "aspernatur",
+            "content": "Et nihil iure ut sit qui libero ab voluptatem repellat nihil aliquam impedit maiores qui provident a quo amet quaerat sit.",
+            "category": "The Ultimate Guide"
+        },
+        {
+            "title": "sed",
+            "content": "Ut repellat recusandae quia at iste reprehenderit error qui deleniti quos perspiciatis accusamus nisi recusandae quidem non corporis illo et.",
+            "category": "The Ultimate Guide"
+        },
+        {
+            "title": "quasi",
+            "content": "Odio ut rerum omnis deleniti minima et eaque dignissimos illum adipisci deleniti et et non.",
+            "category": "Listicles"
+        },
+        {
+            "title": "id",
+            "content": "Qui repellat praesentium est minus ducimus vitae at tempora enim.",
+            "category": "Case Studies & Success Stories"
+        },
+        {
+            "title": "rem",
+            "content": "Explicabo velit minima quis quo quis aut unde voluptates quia ipsam nulla est neque quis libero.",
+            "category": "The Ultimate Guide"
+        },
+        {
+            "title": "provident",
+            "content": "Rerum sed est consequatur minus labore omnis deleniti eligendi optio dolores.",
+            "category": "Reviews & Comparisons"
+        },
+        {
+            "title": "deserunt",
+            "content": "Quia sed explicabo aut inventore quis perferendis qui autem eius aliquid aliquid voluptatum praesentium blanditiis quibusdam.",
+            "category": "Reviews & Comparisons"
+        },
+        {
+            "title": "laboriosam",
+            "content": "Et dolorem minima et in alias quasi qui ut commodi est natus laborum nulla eum in.",
+            "category": "The Ultimate Guide"
+        },
+        {
+            "title": "et",
+            "content": "Rem est assumenda qui cumque voluptate laborum aspernatur optio aut ut facere facere fuga consequatur corporis distinctio.",
+            "category": "The Ultimate Guide"
+        },
+        {
+            "title": "molestiae",
+            "content": "Et perspiciatis esse consequuntur mollitia qui deleniti minus et ratione.",
+            "category": "Case Studies & Success Stories"
+        },
+        {
+            "title": "et",
+            "content": "Qui molestiae deleniti saepe dolores quo dolore magni veniam deleniti et aut officiis deleniti explicabo ut nihil eum molestiae ipsam.",
+            "category": "Listicles"
+        }
+    ]
+}
+```
+
+Posts after with additional pagination data
+```json
+{
+    "Success": true,
+    "message": "All posts with pagination",
+    "pagination": {
+        "current_page": 1,
+        "per_page": 5,
+        "last_page": 3,
+        "path_url": "http://localhost/api/v2/posts",
+        "pages": 12,
+        "next_page_url": "http://localhost/api/v2/posts?page=2",
+        "previous_page_url": null
+    },
+    "data": [
+        {
+            "title": "ipsa",
+            "content": "Libero iste illo ut aut animi quia quibusdam consectetur sunt vel aut.",
+            "category": "Listicles"
+        },
+        {
+            "title": "aspernatur",
+            "content": "Et nihil iure ut sit qui libero ab voluptatem repellat nihil aliquam impedit maiores qui provident a quo amet quaerat sit.",
+            "category": "The Ultimate Guide"
+        },
+        {
+            "title": "sed",
+            "content": "Ut repellat recusandae quia at iste reprehenderit error qui deleniti quos perspiciatis accusamus nisi recusandae quidem non corporis illo et.",
+            "category": "The Ultimate Guide"
+        },
+        {
+            "title": "quasi",
+            "content": "Odio ut rerum omnis deleniti minima et eaque dignissimos illum adipisci deleniti et et non.",
+            "category": "Listicles"
+        },
+        {
+            "title": "id",
+            "content": "Qui repellat praesentium est minus ducimus vitae at tempora enim.",
+            "category": "Case Studies & Success Stories"
+        }
+    ]
 }
 ```
