@@ -4,6 +4,7 @@
 namespace App\Services;
 
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /** Easier service for setup/build a JSON response */
 class ResponseService
@@ -71,7 +72,7 @@ class ResponseService
     }
 
     /** Responses with success status, message, additional data as key-value if specified and resource collection*/
-    public function successWithResource($resource, ?string $message = null, ?array $additionalData = null)
+    public function successWithResource(AnonymousResourceCollection $resource, ?string $message = null, ?array $additionalData = null)
     {
         $resourceData = $resource->resolve();
         $response = [
