@@ -143,7 +143,7 @@ Class is easy to integrate in a Laravel project. You will need:
 }
 ```
 
-### Posts after pagination and additional specific data
+### Posts after with pagination and additional specific data
 ```json
 {
     "success": true,
