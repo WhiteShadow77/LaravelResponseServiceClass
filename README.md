@@ -277,7 +277,7 @@ class CategoryResource extends JsonResource
 }
 ```
 
-### PHP usage example
+### PHP usage examples
 #### Embed in entity service (CategoryService)
 ```php
 <?php
@@ -394,6 +394,166 @@ class CategoryRequest extends FormRequest
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
     {
         App::make(ResponseService::class)->errorResponseWithException('Bad Request');
+    }
+}
+```
+
+#### Post service example
+```php
+<?php
+
+namespace App\Services;
+
+use App\Http\Resources\PostResource;
+use App\Http\Resources\PostResourceCollection;
+use App\Models\Category;
+use App\Models\Post;
+
+class PostService
+{
+    private ResponseService $responseService;
+
+    public function __construct(ResponseService $responseService)
+    {
+        $this->responseService = $responseService;
+    }
+
+    public function getAll()
+    {
+        $posts = Post::all();
+        return $this->responseService->successWithResource(
+            PostResource::collection($posts),
+            'All posts'
+        );
+    }
+
+    public function getAllAndCategoryData()
+    {
+        $categories = Category::all('name');
+        $categoriesData = [
+            'categories' => [
+                'names' => $categories->pluck('name'),
+                'count' => sizeof($categories)
+            ]
+        ];
+
+        $posts = Post::all();
+        return $this->responseService->successWithResource(
+            PostResource::collection($posts),
+            'All posts and categories data',
+            $categoriesData
+        );
+    }
+
+    public function getAllWithPagination()
+    {
+        $posts = Post::paginate(3);
+        $paginationData = $posts->links()->getData();
+
+        $currentPage = $paginationData['paginator']->currentPage();
+
+        $paginationData = [
+            'pagination' => [
+                'current_page' => $currentPage,
+                'per_page' => $paginationData['paginator']->perPage(),
+                'last_page' => $paginationData['paginator']->lastPage(),
+                'path_url' => $paginationData['paginator']->path(),
+                'pages' => $paginationData['paginator']->total(),
+                'next_page_url' => $paginationData['paginator']->nextPageUrl(),
+            ]
+        ];
+
+        if ($currentPage > 1) {
+            $prevPageUrl = route('api.docs.all', [
+                'page' => $currentPage - 1]);
+
+            $paginationData['pagination']['previous_page_url'] = $prevPageUrl;;
+        } else {
+            $paginationData['pagination']['previous_page_url'] = null;;
+        }
+
+        return $this->responseService->successWithResource(
+            PostResource::collection($posts),
+            'All posts with pagination',
+            $paginationData
+        );
+
+    }
+
+    public function getAllWithPaginationAndCategoryData()
+    {
+        $categories = Category::all('name');
+
+        $posts = Post::paginate(3);
+        $paginationData = $posts->links()->getData();
+
+        $currentPage = $paginationData['paginator']->currentPage();
+
+        $paginationData = [
+            'pagination' => [
+                'current_page' => $currentPage,
+                'per_page' => $paginationData['paginator']->perPage(),
+                'last_page' => $paginationData['paginator']->lastPage(),
+                'path_url' => $paginationData['paginator']->path(),
+                'pages' => $paginationData['paginator']->total(),
+                'next_page_url' => $paginationData['paginator']->nextPageUrl(),
+            ]
+        ];
+
+        if ($currentPage > 1) {
+            $prevPageUrl = route('api.docs.all', [
+                'page' => $currentPage - 1]);
+
+            $paginationData['pagination']['previous_page_url'] = $prevPageUrl;;
+        } else {
+            $paginationData['pagination']['previous_page_url'] = null;;
+        }
+
+        $additionalData = [
+            'categories' => [
+                'names' => $categories->pluck('name'),
+                'count' => sizeof($categories)
+            ],
+            'pagination' => $paginationData
+        ];
+
+        return $this->responseService->successWithResource(
+            PostResource::collection($posts),
+            'All posts with pagination and additional data',
+            $additionalData
+        );
+    }
+}
+```
+
+#### Post service embed in PostController
+```php
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Services\PostService;
+
+class PostController extends Controller
+{
+    public function getAll(PostService $postService)
+    {
+        return $postService->getAll();
+    }
+
+    public function getAllWithPagination(PostService $postService)
+    {
+        return $postService->getAllWithPagination();
+    }
+
+    public function getAllAndCategoryData(PostService $postService)
+    {
+        return $postService->getAllAndCategoryData();
+    }
+
+    public function getAllWithPaginationAndCategoryData(PostService $postService)
+    {
+        return $postService->getAllWithPaginationAndCategoryData();
     }
 }
 ```
