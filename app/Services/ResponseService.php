@@ -1,77 +1,100 @@
 <?php
 
 
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Database\Eloquent\Collection;
+namespace App\Services;
 
-/** Easier service for improve/build/tune a JSON response */
+use Illuminate\Http\Exceptions\HttpResponseException;
+
+/** Easier service for setup/build a JSON response */
 class ResponseService
 {
-    private array  $responseData;
+    private const HTTP_OK = 200;
+    private const HTTP_BAD_REQUEST = 400;
+    private const HTTP_UNAUTHORIZED = 401;
+    private const HTTP_FORBIDDEN = 403;
+    private const HTTP_NOT_FOUND = 404;
+    private const HTTP_UNPROCESSABLE_ENTITY = 422;
 
-    private function setMessageFieldIfNotNull(?string $message)
+    private function makeJson(
+        bool    $isSuccess,
+        int     $code = self::HTTP_OK,
+        ?string $message = null,
+        ?array  $keyValueData = null
+    )
     {
-        if(!is_null($message)){
-            $this->responseData['message'] = $message;
+        $response = [
+            'success' => $isSuccess,
+        ];
+
+        if ($message !== null) {
+            $response['message'] = $message;
         }
+
+        if ($keyValueData !== null) {
+            $response = array_merge($response, $keyValueData);
+        }
+
+        return response()->json($response, $code);
     }
+
 
     /** Responses with success status and message if specified */
-    public function successResponse(?string $message = null)
+    public function success(?string $message = null)
     {
-        $this->responseData['success'] = true;
-        $this->setMessageFieldIfNotNull($message);
-
-        return response()->json($this->responseData);
+        return $this->makeJson(isSuccess: true, message: $message);
     }
 
-    /** Responses with error status, message if specified, error code if specified */
-    public function errorResponse(?string $message = null, ?int $code = null)
+    /** Responses with error status, message if specified, specific error code if specified */
+    public function error(?string $message = null, ?int $code = self::HTTP_BAD_REQUEST)
     {
-        $this->responseData['success'] = false;
-        $this->setMessageFieldIfNotNull($message);
-
-        return response()->json($this->responseData, $code ?? 200);
+        return $this->makeJson(false, $code, $message);
     }
 
     /** Responses with success status, key-value data and message if specified */
-    public function successResponseWithKeyValueData(array $keyValueData, ?string $message = null)
+    public function successWithKeyValueData(array $keyValueData, ?string $message = null)
     {
-        $this->responseData['success'] = true;
-        $this->setMessageFieldIfNotNull($message);
-        $result = array_merge($this->responseData, $keyValueData);
-
-        return response()->json($result);
+        return $this->makeJson(isSuccess: true, message: $message, keyValueData: $keyValueData);
     }
 
-    /** Responses with error status, key-value data, message if specified, error code if specified */
-    public function errorResponseWithKeyValueData(array $keyValueData, ?string $message = null, ?int $code = null)
+    /** Responses with error status, key-value data, message if specified, specific error code if specified */
+    public function errorWithKeyValueData(array $keyValueData, ?string $message = null, ?int $code = self::HTTP_BAD_REQUEST)
     {
-        $this->responseData['success'] = false;
-        $this->setMessageFieldIfNotNull($message);
-        $result = array_merge($this->responseData, $keyValueData);
-
-        return response()->json($result, $code ?? 200);
+        return $this->makeJson(false, $code, $message, $keyValueData);
     }
 
-    /** Responses with error status, HttpResponseException */
-    public function errorResponseWithException(string $message, int $code = 400)
+    /** Responses with error status and  with HttpResponseException */
+    public function errorWithException(string $message, ?int $code = self::HTTP_BAD_REQUEST)
     {
         throw new HttpResponseException(
-            response()->json([
-                'success' => false,
-                'message' => $message,
-            ], $code)
+            $this->makeJson(false, $code, $message)
         );
     }
 
-    /** Responses with success status, message, key-value data if specified and resource collection*/
-    public function successResponseWithResourceCollection(
-        string $message, string $resourceClassName, $collectionToResponse, ?array $info
-    )
+    /** Responses with success status, message, additional data as key-value if specified and resource collection*/
+    public function successWithResource($resource, ?string $message = null, ?array $additionalData = null)
     {
-        $resourceInstance = new $resourceClassName($collectionToResponse);
-        $resourceCollectionClassName = $resourceClassName . 'Collection';
-        return new $resourceCollectionClassName(true, $message, $resourceInstance, $info);
+        $resourceData = $resource->resolve();
+        $response = [
+            'success' => true,
+        ];
+
+        if ($message !== null) {
+            $response['message'] = $message;
+        }
+
+        if ($additionalData !== null) {
+            if (sizeof($additionalData) > 1) {
+                foreach ($additionalData as $key => $value) {
+                    $response[$key] = current($value);
+                }
+            } else {
+                $response[key($additionalData)] = current($additionalData);
+            }
+        }
+        $response['data'] = $resourceData;
+
+        return response()->json($response);
     }
 }
+
+
