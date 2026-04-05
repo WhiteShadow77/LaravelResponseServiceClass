@@ -326,6 +326,7 @@ class CategoryService
 
 }
 ```
+
 #### Typical practice of call of entity service (CategoryService) from a controller (not required for your usage, just for understand how it works)
 ```php 
 <?php
