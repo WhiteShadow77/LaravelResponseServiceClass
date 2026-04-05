@@ -11,7 +11,7 @@ Class supports like SOLID and provides:
 * Structure of all responses depends from one definition place and can be changed for all responses from one place.
 
 Class is easy to integrate in a Laravel project. You will need: 
-* to put it in a Service directory
+* to put it in a Service directory (app/Services)
 * Create Laravel resource classes for your entities (best practice even if without this class usage)
 
 
