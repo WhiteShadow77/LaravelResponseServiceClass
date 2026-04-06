@@ -74,27 +74,16 @@ class ResponseService
     /** Responses with success status, message, additional data as key-value if specified and resource collection*/
     public function successWithResource(AnonymousResourceCollection $resource, ?string $message = null, ?array $additionalData = null)
     {
-        $resourceData = $resource->resolve();
-        $response = [
-            'success' => true,
-        ];
+        // Merge additional data with the resource data key
+        $data = array_merge($additionalData ?? [], [
+            'data' => $resource->resolve()
+        ]);
 
-        if ($message !== null) {
-            $response['message'] = $message;
-        }
-
-        if ($additionalData !== null) {
-            if (sizeof($additionalData) > 1) {
-                foreach ($additionalData as $key => $value) {
-                    $response[$key] = current($value);
-                }
-            } else {
-                $response[key($additionalData)] = current($additionalData);
-            }
-        }
-        $response['data'] = $resourceData;
-
-        return response()->json($response);
+        return $this->makeJson(
+            isSuccess: true,
+            message: $message,
+            keyValueData: $data
+        );
     }
 }
 
