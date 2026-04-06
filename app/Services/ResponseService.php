@@ -74,7 +74,6 @@ class ResponseService
     /** Responses with success status, message, additional data as key-value if specified and resource collection*/
     public function successWithResource(AnonymousResourceCollection $resource, ?string $message = null, ?array $additionalData = null)
     {
-        // Merge additional data with the resource data key
         $data = array_merge($additionalData ?? [], [
             'data' => $resource->resolve()
         ]);
